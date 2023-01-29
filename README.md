@@ -7,7 +7,7 @@ This uses FastAPI, Redis, Celery, Flower, Postgreslq and Docker.
 
 A .env file is used for the environmental variables.  The file should look something like this.
 
-`
+```
 DB_HOST=db
 DB_NAME=quiz_app
 DB_PASSWORD=1234567
@@ -26,7 +26,7 @@ FLAGAPI=https://countryflagsapi.com/
 FILETYPE=png
 
 APP_NAME=Quiz App
-`
+```
 
 To start the app, you'll need docker installed.  Then run `docker compose build`.  If this is successful, run `docker compose up` to start everything and run the app. Make sure you're in the API folder.
 
