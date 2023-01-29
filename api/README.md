@@ -36,3 +36,5 @@ I haven't automated creating the database tables because I'm learning how to use
 `http://127.0.0.1:8000/admin/update-country`
 
 This is very much a work in progress as I'm learning FastAPI, Docker and Celery.
+
+Todo:  To many to list here right now.  After I'm comfortable with using Celery, I'm going to restructure the API endpoints so it makes more sense and to add versioning, i.e. `/api/v1/admin/status`
