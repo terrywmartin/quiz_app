@@ -1,0 +1,10 @@
+
+<span hx-swap="outerHTML" hx-get="/admin/update" hx-target="#update-status" hx-indicator="#loading" class="btn btn-info btn-sm">Update</span>
+
+<br>
+<br>
+<h3 id="loading" class="htmx-indicator" >Updating...</h3>
+<br>
+{% if status_code != "" %}
+    <p>Status Code: {{ status_code }} - {{ msg }}</p>
+{% endif %}

@@ -1,0 +1,113 @@
+version: "3.9"
+
+services:
+
+  db:
+    container_name: postgres_db
+    image: postgres
+    restart: always
+    ports: 
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    volumes:
+      - ./app:/app
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    ports:
+      - 5050:80
+    depends_on:
+      - db
+  
+  app:
+    container_name: app
+    build: .
+    environment: 
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - COUNTRYAPI=${COUNTRYAPI}
+      - FIELDS=${FIELDS}
+      - FLAGAPI=${FLAGAPI}
+      - FILETYPE=${FILETYPE}
+      - APP_NAME=${APP_NAME}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+
+    command: "./entrypoint.sh"
+    volumes:
+      - ./app:/app
+    ports:
+      - 8000:8000
+    restart: always
+    depends_on:
+      - db
+      - pgadmin
+
+  redis:
+    container_name: redis
+    image: redis:latest
+
+  celery_worker:
+    container_name: celery_worker
+    build: .
+    command: celery -A app.celery_worker.celery worker --loglevel=info
+    volumes:
+      - ./app:/app
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - COUNTRYAPI=${COUNTRYAPI}
+      - FIELDS=${FIELDS}
+      - FLAGAPI=${FLAGAPI}
+      - FILETYPE=${FILETYPE}
+      - APP_NAME=${APP_NAME}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+    depends_on:
+      - app
+      - redis
+
+  flower:
+    container_name: flower
+    build: .
+    volumes:
+      - ./app:/app
+    command:  celery -A app.celery_worker.celery flower --port=5555
+    
+    ports:
+      - 5556:5555
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - COUNTRYAPI=${COUNTRYAPI}
+      - FIELDS=${FIELDS}
+      - FLAGAPI=${FLAGAPI}
+      - FILETYPE=${FILETYPE}
+      - APP_NAME=${APP_NAME}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+    depends_on:
+      - app
+      - redis
+      - celery_worker
+
+
+
+
+

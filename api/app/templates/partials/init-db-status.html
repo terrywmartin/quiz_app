@@ -1,0 +1,10 @@
+
+<span hx-swap="outerHTML" hx-get="/admin/init-db" hx-target="#init-status" hx-indicator="#loading" class="btn btn-info btn-sm">Initialize</span>
+
+<br>
+<br>
+<h3 id="loading" class="htmx-indicator" >Creating tables...</h3>
+<br>
+{% if status_code != "" %}
+    <p>Status Code: {{ status_code }} - {{ msg }}</p>
+{% endif %}
